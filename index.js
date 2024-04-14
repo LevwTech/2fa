@@ -33,6 +33,14 @@ function validate(code, last30SecsCodes) {
     return last30SecsCodes.includes(code)
 }
 
+app.post('/2fa/:org', (req, res) => {
+    const { email, code } = req.body;
+    const org = req.params.org;
+    const secret = organizations[org][email];
+    const last30SecsCodes = obtainAllLast30SecsCodes(secret);
+    return validate(code, last30SecsCodes) ? res.status(200).json({ status: 'success' }) : res.status(401).json({ status: 'failed' });
+});
+
 app.post('/auth', (req, res) => {
     const { email, password } = req.body;
     if (email === 'test@test.com' && password === 'test1234') {
@@ -41,14 +49,6 @@ app.post('/auth', (req, res) => {
     else {
         res.status(401).json({ status: 'failed' });
     }
-});
-
-app.post('/2fa/:org', (req, res) => {
-    const { email, code } = req.body;
-    const org = req.params.org;
-    const secret = organizations[org][email];
-    const last30SecsCodes = obtainAllLast30SecsCodes(secret);
-    return validate(code, last30SecsCodes) ? res.status(200).json({ status: 'success' }) : res.status(401).json({ status: 'failed' });
 });
 
 app.get('/test', (req, res) => {
