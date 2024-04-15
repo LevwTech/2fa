@@ -1,9 +1,11 @@
 const express = require('express');
+const cors = require("cors");
 const CryptoJS = require('crypto-js');
 const app = express();
 const EXPIRE_DURATION = 30;
 
 app.use(express.json());
+app.use(cors({ origin: "*" }));
 
 const organizations = {
     piedpiper: {
